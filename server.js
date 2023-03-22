@@ -39,6 +39,29 @@ app.delete("/api/notes/:id", (req, res) => {
   );
 });
 
+app.post("/notes", (req, res) => {
+  // Get the data from the request body
+  const { title, body } = req.body;
+
+  // Validate the data
+  if (!title || !body) {
+    res.status(400).json({ error: "Missing title or body" });
+    return;
+  }
+
+  // Save the data to a database or file system
+  saveNoteToDatabase(title, body)
+    .then((note) => {
+      // Send a response back to the client
+      res.status(201).json(note);
+    })
+    .catch((err) => {
+      // Handle any errors that occurred while saving the note
+      console.error(err);
+      res.status(500).json({ error: "Internal Server Error" });
+    });
+});
+
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
